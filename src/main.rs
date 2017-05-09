@@ -1,13 +1,15 @@
-// bring input/output library into scope (from standard library)
-// bring libraries into scope explicity with `use` keyword
-use std::io;
+extern crate rand;
 
-// main function is entry point into program
+use std::io;
+use rand::Rng;
+
 fn main() {
     // println! is a macro
     println!("Guess the number I am thinking of");
-    println!("Please enter a number: ");
-    // the `let` keyword is used to create variables
+    let lower_range = 1;
+    let upper_range = 100;
+    let secret_number = rand::thread_rng().gen_range(lower_range, upper_range + 1);
+    println!("Please guess a number between {} and {}: ", lower_range, upper_range);
     // in rust, variables are immutable by default, but the `mut` keyword allows mutability
     // :: -> association, `new` is associated function of `String` type (static method)
     let mut guess = String::new();
@@ -19,7 +21,8 @@ fn main() {
     io::stdin().read_line(&mut guess)
                .expect("Failed to read in line");
     // {} is a placeholder that holds a value in place (string interpolation)
-    println!("You guess {}", guess);
+    println!("You guessed {}", guess);
+    println!("The secret number was {}", secret_number);
     string_interpolation();
 }
 
