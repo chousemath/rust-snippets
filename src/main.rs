@@ -10,25 +10,44 @@ fn main() {
     let lower_range = 1;
     let upper_range = 100;
     let secret_number = rand::thread_rng().gen_range(lower_range, upper_range + 1);
-    let secret_string = secret_number.to_string();
-    println!("Please guess a number between {} and {}: ", lower_range, upper_range);
-    // in rust, variables are immutable by default, but the `mut` keyword allows mutability
-    // :: -> association, `new` is associated function of `String` type (static method)
-    let mut guess = String::new();
-    // call the `stdin` method from the `io` library on first line of program
-    // io::stdin() returns handle to standard input for terminal
-    // .readline(str x) gets input from user and returns io::Result
-    // string target of .readline(str x) must be mutable to accept value
-    // & -> reference, and references are immutable by default, therefore need &mut
-    io::stdin().read_line(&mut guess)
-               .expect("Failed to read in line");
-    println!("You guessed {}", guess);
+    // let secret_number = secret_number.to_string();
+    loop {
+        println!("Please guess a number between {} and {}: ", lower_range, upper_range);
+        // in rust, variables are immutable by default, but the `mut` keyword allows mutability
+        // :: -> association, `new` is associated function of `String` type (static method)
+        let mut guess = String::new();
+        // call the `stdin` method from the `io` library on first line of program
+        // io::stdin() returns handle to standard input for terminal
+        // .readline(str x) gets input from user and returns io::Result
+        // string target of .readline(str x) must be mutable to accept value
+        // & -> reference, and references are immutable by default, therefore need &mut
+        io::stdin().read_line(&mut guess)
+                   .expect("Failed to read in line");
+        // shadow previous string value of `guess` with an immutable int32 version of `guess`
+        let guess: u32 = match guess.trim().parse() {
+            Ok(num)    => num,
+            Err(_) => {
+                println!("I'm sorry, your input ({}) is invalid, please try again...", guess);
+                continue;
+            }
+        };
+        println!("You guessed {}", guess);
 
-    match guess.cmp(&secret_string) {
-        Ordering::Less    => println!("Your guess was too small..."),
-        Ordering::Greater => println!("Your guess was too large..."),
-        Ordering::Equal   => println!("Your guess was correct, you win!")
+        if guess > upper_range || guess < lower_range {
+            println!("Your guess was outside the guess limits, please try again...");
+            continue;
+        }
+
+        match guess.cmp(&secret_number) {
+            Ordering::Less    => println!("Your guess was too small..."),
+            Ordering::Greater => println!("Your guess was too large..."),
+            Ordering::Equal   => {
+                println!("Your guess was correct, you win!");
+                break;
+            }
+        }
     }
+
 
     println!("The secret number was {}", secret_number);
     string_interpolation();
